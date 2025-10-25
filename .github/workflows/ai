@@ -1,0 +1,57 @@
+from collections import deque
+
+# Step 1: Create a fixed 10x10 parking lot
+def create_parking_lot():
+    lot = [
+        ['S', 'X', 'X', 'E', 'X', 'X', 'X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'E']
+    ]
+    return lot, (0, 0)  # Start is always at top-left
+
+# Step 2: Print the parking lot grid
+def print_grid(lot, title):
+    print(f"\n🅿️ {title}:")
+    for row in lot:
+        print(" ".join(row))
+    print()
+
+# Step 3: BFS to find and mark the nearest empty slot
+def find_and_park(lot, start):
+    rows, cols = len(lot), len(lot[0])
+    visited = [[False]*cols for _ in range(rows)]
+    queue = deque([start])
+    visited[start[0]][start[1]] = True
+    directions = [(-1,0), (1,0), (0,-1), (0,1)]
+
+    while queue:
+        r, c = queue.popleft()
+        if lot[r][c] == 'E':
+            print(f"✅ Found empty slot at ({r}, {c}) — parking now.")
+            lot[r][c] = 'X'  # Mark as parked
+            return True
+        for dr, dc in directions:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols:
+                if not visited[nr][nc] and lot[nr][nc] != 'X':
+                    visited[nr][nc] = True
+                    queue.append((nr, nc))
+    print("❌ No empty slot found.")
+    return False
+
+# Step 4: Run the program
+command = input("Type 'start' to begin: ").strip().lower()
+if command == 'start':
+    lot, start_pos = create_parking_lot()
+    print_grid(lot, "Initial Parking Lot")
+    parked = find_and_park(lot, start_pos)
+    print_grid(lot, "Updated Parking Lot After Parking")
+else:
+    print("❌ Please type 'start' to begin.")
